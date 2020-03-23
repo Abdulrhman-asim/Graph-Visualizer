@@ -6,6 +6,7 @@ import algorithms.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -68,6 +69,9 @@ public class PrintingFrame extends JFrame {
 			minimumSpanningTree();
 		else if (choice == 7)
 			hamiltonianAlgorithm();
+		else if (choice == 5)
+			EulerAlgorithm();
+		
 
 	}
 
@@ -415,6 +419,22 @@ public class PrintingFrame extends JFrame {
 			}
 			add(cycle);
 		}
+	}
+	
+	public void EulerAlgorithm() {
+
+		msg = new Label("This Graph is not Eulerian");
+		msg.setBounds(110, 20, 400, 30);
+		msg.setFont(new Font(Font.MONOSPACED, Font.BOLD, 18));
+		add(msg);
+
+		EulerPathAlgorithm eul = new EulerPathAlgorithm(graph);
+		int type = eul.Euler();
+		//eul.getpath() holds the path in the following way
+		//ex. if the path for an euler cycle is: 1 to 2, 2 to 3, 3 to 4, then 4 to 1
+		//eul.getpath should return a vector of integers that looks like [1, 2, 2, 3, 3, 4, 4, 1]
+		
+		
 	}
 
 	private class listen implements MouseListener {

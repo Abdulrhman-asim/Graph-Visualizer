@@ -23,7 +23,7 @@ public class Home {
 			home.copy(new PrintingFrame(choice));
 		} else if (choice == 5) {
 			System.out.println("Euler's path/Circuit");
-			
+			home.copy(new PrintingFrame(choice));
 		}
 
 		else if (choice == 7) {

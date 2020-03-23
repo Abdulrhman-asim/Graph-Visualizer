@@ -13,6 +13,7 @@ public class GraphPanel extends JPanel {
 	private int windowH, windowW;
 	private static MyGraph graph = null;
 	VisualizationViewer<String, String> vv;
+	 
 
 	public GraphPanel(MyGraph a) {
 		graph = a;
