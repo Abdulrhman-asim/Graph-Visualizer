@@ -126,7 +126,8 @@ public class HomeFrame extends JFrame {
 			}
 			if (event.getComponent().getName().equals("eulerPath")) {
 				Home.choice = 5;
-				Home.updateFrame();
+				Home.home.copy(new TypeFrame("Select"));
+
 			}
 			if (event.getComponent().getName().equals("coloring")) {
 				Home.choice = 6;

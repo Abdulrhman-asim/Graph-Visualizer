@@ -17,6 +17,7 @@ public class MyGraph extends SparseMultigraph<String, String> {
 		super();
 		vertices.putAll(another.vertices);
 		edges.putAll(another.edges);
+		
 	}
 	
 	@Override

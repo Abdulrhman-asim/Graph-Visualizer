@@ -5,7 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import controller.Home;
-
+import algorithms.EulerPathAlgorithm;
 import algorithms.MyGraph;
 
 import edu.uci.ics.jung.graph.util.EdgeType;
