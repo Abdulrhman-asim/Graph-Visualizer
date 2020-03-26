@@ -32,10 +32,10 @@ public class HomeFrame extends JFrame {
 		incMat.setBounds(260, 200, 140, 34);
 		repMat.setBounds(420, 200, 140, 34);
 		eulerPath.setBounds(260, 250, 140, 34);
-		coloring.setBounds(260, 300, 140, 34);
-		hamiltonPath.setBounds(420, 250, 140, 34);
+		coloring.setBounds(260, 350, 140, 34);
+		hamiltonPath.setBounds(260, 300, 140, 34);
 //		hamiltonCircuit.setBounds(420, 300, 140, 34);
-		FA.setBounds(260, 350, 140, 34);
+		FA.setBounds(420, 250, 140, 34);
 		MHC.setBounds(420, 300, 140, 34);//420, 350, 140, 34
 		MST.setBounds(420, 350, 140, 34);
 
@@ -126,7 +126,7 @@ public class HomeFrame extends JFrame {
 			}
 			if (event.getComponent().getName().equals("eulerPath")) {
 				Home.choice = 5;
-				Home.home.copy(new TypeFrame("Select"));
+				Home.home.copy(new InputFrame("Graph", false));
 
 			}
 			if (event.getComponent().getName().equals("coloring")) {
@@ -136,12 +136,12 @@ public class HomeFrame extends JFrame {
 			}
 			if (event.getComponent().getName().equals("hamiltonPath")) {
 				Home.choice = 7;
-				Home.home.copy(new InputFrame("Undirected Graph", false));
+				Home.home.copy(new InputFrame("Graph", false));
 
 			}
 			if (event.getComponent().getName().equals("FA")) {
 				Home.choice = 9;
-				Home.updateFrame();
+				Home.home.copy(new InputFrame("Graph", false));
 			}
 			if (event.getComponent().getName().equals("MHC")) {
 				Home.choice = 10;
@@ -152,11 +152,6 @@ public class HomeFrame extends JFrame {
 				Home.choice = 11;
 				Home.home.copy(new InputFrame("Input", false));
 			}
-			
-			/**
-			 * Remove this comment to test |_|
-			 */
-			
 			
 		}
 

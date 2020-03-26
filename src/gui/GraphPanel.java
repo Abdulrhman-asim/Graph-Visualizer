@@ -1,10 +1,13 @@
 package gui;
+
 import javax.swing.*;
 import org.apache.commons.collections15.Transformer;
 import algorithms.MyGraph;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
+import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
+
 import java.awt.*;
 
 public class GraphPanel extends JPanel {
@@ -13,11 +16,25 @@ public class GraphPanel extends JPanel {
 	private int windowH, windowW;
 	private static MyGraph graph = null;
 	VisualizationViewer<String, String> vv;
-	 
 
 	public GraphPanel(MyGraph a) {
 		graph = a;
 		updateView();
+	}
+
+	public void changeColor(final MyGraph tree) {
+		
+		Transformer<String, Paint> edgePaint = new Transformer<String, Paint>() {
+
+			public Paint transform(String s) { // s represents the edge
+				if(tree.containsEdge(s))
+					return Color.BLUE;
+				else
+					return Color.BLACK;
+
+			}
+		};
+		vv.getRenderContext().setEdgeDrawPaintTransformer(edgePaint);
 	}
 
 	public void updateView() {

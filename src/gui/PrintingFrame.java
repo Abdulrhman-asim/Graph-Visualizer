@@ -6,10 +6,7 @@ import algorithms.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -20,10 +17,11 @@ import edu.uci.ics.jung.graph.util.EdgeType;
 
 public class PrintingFrame extends JFrame {
 
+
 	private static final long serialVersionUID = 1L;
-	final static MyGraph graph = GraphPanel.getGraph();
+	static MyGraph graph = GraphPanel.getGraph();
 	final Button back = new Button("Back");
-	private static Label msg = new Label("");
+	private static Label msg = null;
 	final Button anoter = new Button("Another Path");
 	final Button cycle = new Button("Cycle");
 	private static GraphPanel panel;
@@ -31,9 +29,11 @@ public class PrintingFrame extends JFrame {
 	private static Vector<MyGraph> cycles;
 	private static int pathsIndex;
 	private static int cyclesIndex;
+	private static String start = "";
 
 	public PrintingFrame(int choice) {
 
+		graph = GraphPanel.getGraph();
 		setLayout(null);
 		pathsIndex = cyclesIndex = 0;
 
@@ -42,8 +42,8 @@ public class PrintingFrame extends JFrame {
 		back.setName("back");
 		add(back);
 
-		anoter.addMouseListener(new listen());
 		back.addMouseListener(new listen());
+		anoter.addMouseListener(new listen());
 		anoter.setBounds(480, 432, 90, 25);
 		anoter.setFont(new Font(Font.DIALOG, Font.BOLD, 12));
 		anoter.setName("another");
@@ -71,7 +71,9 @@ public class PrintingFrame extends JFrame {
 			hamiltonianAlgorithm();
 		else if (choice == 5)
 			EulerAlgorithm();
-		
+
+		else if (choice == 9)
+			flueryAlgorithm();
 
 	}
 
@@ -365,9 +367,22 @@ public class PrintingFrame extends JFrame {
 		Vector<Integer[]> vec = new Vector<Integer[]>();
 		for (int j = 0; j < V; ++j) {
 			Vector<Integer[]> tempVec = ham.getHamiltonianPaths(tempG, j, V);
-			if (tempVec.size() > vec.size())
+			if (tempVec.size() > vec.size()) {
 				vec = tempVec;
+				i = j;
+			}
 		}
+
+		{
+			MapIterator<String, Integer> it = map.mapIterator();
+			while (it.hasNext()) {
+				String key = it.next();
+				int value = map.get(key);
+				if (value == i)
+					start = key;
+			}
+		}
+
 		int current = 0;
 		if (vec.size() != 0) {
 			String[] starts = new String[vec.size()];
@@ -400,13 +415,13 @@ public class PrintingFrame extends JFrame {
 				}
 				paths.add(element);
 			}
-			msg.setText("Hamiltonian Path 1/" + paths.size());
+			msg.setText("Hamiltonian Path 1/" + paths.size() + " From " + start);
 			panel = new GraphPanel(paths.get(0));
 			panel.setBounds(10, 50, 560, 360);
 			panel.vv.setBounds(10, 10, 560 - 20, 360 - 20);
 			add(panel);
 			add(anoter);
-			
+
 			cycles = new Vector<MyGraph>();
 			for (int j = 0; j < current; ++j) {
 
@@ -420,21 +435,75 @@ public class PrintingFrame extends JFrame {
 			add(cycle);
 		}
 	}
-	
+
 	public void EulerAlgorithm() {
 
 		msg = new Label("This Graph is not Eulerian");
-		msg.setBounds(110, 20, 400, 30);
-		msg.setFont(new Font(Font.MONOSPACED, Font.BOLD, 18));
+
+		msg.setBounds(100, 20, 400, 30);
+		msg.setFont(new Font(Font.MONOSPACED, Font.BOLD, 25));
 		add(msg);
 
 		EulerPathAlgorithm eul = new EulerPathAlgorithm(graph);
 		int type = eul.Euler();
-		//eul.getpath() holds the path in the following way
-		//ex. if the path for an euler cycle is: 1 to 2, 2 to 3, 3 to 4, then 4 to 1
-		//eul.getpath should return a vector of integers that looks like [1, 2, 2, 3, 3, 4, 4, 1]
-		
-		
+		if (!(type == 0 || graph.getVertexCount() == 0)) {
+			if (type == 2)
+				msg.setText("It Has Eulerian Path");
+			else
+				msg.setText("It Has Eulerian Circuit");
+
+			panel = new GraphPanel(new MyGraph(GraphPanel.getGraph()));
+			panel.setBounds(10, 50, 560, 360);
+			panel.vv.setBounds(10, 10, 560 - 20, 360 - 20);
+			add(panel);
+
+			panel.remove(panel.vv);
+
+			Button print = new Button("Print It");
+			print.addMouseListener(new listen());
+			print.setBounds(480, 432, 90, 25);
+			print.setFont(new Font(Font.DIALOG, Font.BOLD, 12));
+			print.setName("print");
+			add(print);
+
+		}
+	}
+
+	public void flueryAlgorithm() {
+
+		msg = new Label("This Graph is not Eulerian");
+		add(msg);
+
+		msg.setBounds(10, 20, 650, 30);
+
+		EulerPathAlgorithm eul = new EulerPathAlgorithm(graph);
+		int type = eul.Euler();
+		if (!(type == 0 || graph.getVertexCount() == 0)) {
+			if (type == 2)
+				msg.setText("Eulerian Path [");
+			else
+				msg.setText("Eulerian Circuit [");
+
+			panel = new GraphPanel(new MyGraph(GraphPanel.getGraph()));
+			panel.setBounds(10, 50, 560, 360);
+			panel.vv.setBounds(10, 10, 560 - 20, 360 - 20);
+			add(panel);
+
+			String[] edgat = eul.getOutput().split("\n");
+			for (int i = 0; i < edgat.length; ++i) {
+				String[] args = edgat[i].split(" ");
+
+				String sec = "";
+				String fir = "";
+				fir = edgat[i].split(" ")[0];
+				if (args.length == 2)
+					sec = edgat[i].split(" ")[1];
+				msg.setText(msg.getText() + fir + " => ");
+				if (i == edgat.length - 1)
+					msg.setText(msg.getText() + sec + "]");
+
+			}
+		}
 	}
 
 	private class listen implements MouseListener {
@@ -483,12 +552,48 @@ public class PrintingFrame extends JFrame {
 				pathsIndex++;
 				pathsIndex %= paths.size();
 				msg.setText("Hamiltonian Path " + (pathsIndex + 1) + "/"
-						+ paths.size());
+						+ paths.size() + " From " + start);
 				panel.remove(panel.vv);
 				panel.repaint();
 				panel.setGraph(paths.get(pathsIndex));
 				panel.setBounds(10, 50, 560, 360);
 				panel.vv.setBounds(10, 10, 560 - 20, 360 - 20);
+			}
+			if (arg0.getComponent().getName().equals("print")) {
+
+				/**/
+
+				msg.setFont(new Font(Font.DIALOG, Font.PLAIN, 12));
+				msg.setBounds(10, 20, 650, 30);
+
+				EulerPathAlgorithm eul = new EulerPathAlgorithm(graph);
+				int type = eul.Euler();
+				if (!(type == 0 || graph.getVertexCount() == 0)) {
+					if (type == 2)
+						msg.setText("Eulerian Path [");
+					else
+						msg.setText("Eulerian Circuit [");
+
+					panel.setGraph(GraphPanel.getGraph());
+					panel.setBounds(10, 50, 560, 360);
+					panel.vv.setBounds(10, 10, 560 - 20, 360 - 20);
+
+					String[] edgat = eul.getOutput().split("\n");
+					for (int i = 0; i < edgat.length; ++i) {
+						String[] args = edgat[i].split(" ");
+
+						String sec = "";
+						String fir = "";
+						fir = edgat[i].split(" ")[0];
+						if (args.length == 2)
+							sec = edgat[i].split(" ")[1];
+						msg.setText(msg.getText() + fir + " => ");
+						if (i == edgat.length - 1)
+							msg.setText(msg.getText() + sec + "]");
+
+					}
+				}
+
 			}
 		}
 	}
