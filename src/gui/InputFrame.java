@@ -188,7 +188,7 @@ class InputFrame extends JFrame {
 				Home.updateFrame();
 			}
 			else{
-				if(Home.choice == 11 || Home.choice == 7){
+				if(Home.choice == 11 || Home.choice == 10 || Home.choice == 7 || Home.choice == 5 || Home.choice == 6 || Home.choice == 9){
 					Home.home.copy(new HomeFrame("Home"));
 				}
 				else

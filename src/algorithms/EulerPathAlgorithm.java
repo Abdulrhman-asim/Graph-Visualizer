@@ -12,20 +12,24 @@ public class EulerPathAlgorithm {
 
 	private int V = 0;
 	private int E = 0;
+	String output = "";
 	HashedMap<String, Integer> map = new HashedMap<String, Integer>();
 	private ArrayList<String>[] adj;
 	MyGraph g;
 	private Vector<String> path;
-	
-	public Vector<String> getPath()
-	{
+
+	public Vector<String> getPath() {
 		return path;
 	}
 
+	public String getOutput(){
+		return output;
+	}
 	public EulerPathAlgorithm(MyGraph in) {
 		g = new MyGraph(in);
 		g.et = in.et;
 		path = new Vector<String>();
+		output = "";
 	}
 
 	// 0 not eulerian
@@ -47,9 +51,8 @@ public class EulerPathAlgorithm {
 					oddCounter++;
 				if (numOfEdges > 0)
 					hasEdges = true;
-
 			}
-			System.out.println(hasEdges);
+//			System.out.println(hasEdges);
 			if (hasEdges)
 				connctd = isConnected();
 
@@ -69,7 +72,6 @@ public class EulerPathAlgorithm {
 
 			getEulerRoute(key);
 			return (oddCounter == 2) ? 2 : 1;
-
 		}
 
 		return 0;
@@ -145,27 +147,36 @@ public class EulerPathAlgorithm {
 
 	private void getEulerRoute(String u) {
 		// Recur for all the vertices adjacent to this vertex
-		
+
+		if (E <= 0)
+			return;
+
 		for (int i = 0; i < adj[map.get(u)].size(); i++) {
 			String v = adj[map.get(u)].get(i);
 			// If edge u-v is a valid next edge
-			if (isValidNextEdge(u, v)) {
-				
-				System.out.println(u + "-" + v + " ");
-				//System.out.println("Edge Rem: " + E);
-				path.add(u);
-				path.add(v);
-				E--;
-				
 
-				// This edge is used so remove it now
-				adj[map.get(u)].remove(v);
-				adj[map.get(v)].remove(u);
-				if(E > 0)
+			if (E > 0) {
+				if (isValidNextEdge(u, v)) {
+
+					output += u + " " + v;
+					output += "\n";
+//					System.out.println(u + "-" + v + " ");
+					// System.out.println("Edge Rem: " + E);
+					path.add(u);
+					path.add(v);
+					E--;
+
+					// This edge is used so remove it now
+					adj[map.get(u)].remove(v);
+					adj[map.get(v)].remove(u);
+					
 					getEulerRoute(v);
+
+				}
+
 			}
+
 		}
-		
 	}
 
 	// The function to check if edge u-v can be
@@ -207,9 +218,9 @@ public class EulerPathAlgorithm {
 		isVisited[map.get(v)] = true;
 		int count = 1;
 		// Recur for all vertices adjacent to this vertex
-		for (String adj : adj[map.get(v)]) {
-			if (!isVisited[map.get(adj)]) {
-				count = count + dfsCount(adj, isVisited);
+		for (String ad : adj[map.get(v)]) {
+			if (!isVisited[map.get(ad)]) {
+				count = count + dfsCount(ad, isVisited);
 			}
 		}
 		return count;

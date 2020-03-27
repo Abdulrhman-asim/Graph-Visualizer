@@ -3,7 +3,7 @@
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
   <jar>C:\Users\Ali\Desktop\popUp.jar</jar>
-  <outfile>C:\Users\Ali\workspace\shit\program.exe</outfile>
+  <outfile>C:\Users\Ali\workspace\Graph-Visualizer\program.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>

@@ -22,27 +22,32 @@ public class Home {
 		if (choice >= 1 && choice <= 4) {
 			home.copy(new PrintingFrame(choice));
 		} else if (choice == 5) {
-			System.out.println("Euler's path/Circuit");
+//			System.out.println("Euler's path/Circuit");
 			home.copy(new PrintingFrame(choice));
 		}
 
 		else if (choice == 7) {
-			System.out.println("Hamiltonian path/Circuit");
+//			System.out.println("Hamiltonian path/Circuit");
 			home.copy(new PrintingFrame(choice));
 			
 
 		} else if (choice == 6) {
-			System.out.println("Graph Coloring Problem.");
+//			System.out.println("Graph Coloring Problem.");
 
+			home.copy(new PrintingFrame(choice));
 		}
 
 		else if (choice == 9) {
-			System.out.println("Fleury Algorithm");
+//			System.out.println("Fleury Algorithm");
+			home.copy(new PrintingFrame(choice));
 
 		}
 
 		else if (choice == 10) {
-			System.out.println("Minimun Hamiltonian Circuit");
+//			System.out.println("Minimun Hamiltonian Circuit");
+			home.copy(new PrintingFrame(choice));
+
+			
 
 		} else {
 
