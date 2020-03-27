@@ -32,8 +32,9 @@ public class Home {
 			
 
 		} else if (choice == 6) {
-			System.out.println("Graph Coloring Problem.");
+//			System.out.println("Graph Coloring Problem.");
 
+			home.copy(new PrintingFrame(choice));
 		}
 
 		else if (choice == 9) {
@@ -43,7 +44,10 @@ public class Home {
 		}
 
 		else if (choice == 10) {
-			System.out.println("Minimun Hamiltonian Circuit");
+//			System.out.println("Minimun Hamiltonian Circuit");
+			home.copy(new PrintingFrame(choice));
+
+			
 
 		} else {
 

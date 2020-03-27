@@ -17,25 +17,24 @@ import edu.uci.ics.jung.graph.util.EdgeType;
 
 public class PrintingFrame extends JFrame {
 
-
 	private static final long serialVersionUID = 1L;
 	static MyGraph graph = GraphPanel.getGraph();
 	final Button back = new Button("Back");
 	private static Label msg = null;
-	final Button anoter = new Button("Another Path");
+	final Button anoter = new Button("Path");
 	final Button cycle = new Button("Cycle");
 	private static GraphPanel panel;
 	private static Vector<MyGraph> paths;
 	private static Vector<MyGraph> cycles;
-	private static int pathsIndex;
-	private static int cyclesIndex;
 	private static String start = "";
+	private static boolean check = true;
+	String[] starts;
+	String[] ends;
 
 	public PrintingFrame(int choice) {
 
 		graph = GraphPanel.getGraph();
 		setLayout(null);
-		pathsIndex = cyclesIndex = 0;
 
 		back.setBounds(10, 432, 90, 25);
 		back.setFont(new Font(Font.DIALOG, Font.BOLD, 12));
@@ -55,25 +54,24 @@ public class PrintingFrame extends JFrame {
 
 		if (choice == 1)
 			adjacencyList();
-
 		else if (choice == 2)
 			adjacencyMatrix();
-
 		else if (choice == 3)
 			incidenceMatrix();
-
 		else if (choice == 4)
 			representationMatrix();
-
 		else if (choice == 11)
 			minimumSpanningTree();
 		else if (choice == 7)
 			hamiltonianAlgorithm();
 		else if (choice == 5)
 			EulerAlgorithm();
-
 		else if (choice == 9)
 			flueryAlgorithm();
+		else if (choice == 10)
+			minimumHamiltonian();
+		else if (choice == 6)
+			coloringProblem();
 
 	}
 
@@ -267,6 +265,7 @@ public class PrintingFrame extends JFrame {
 		if (check.Is_connected(n)) {
 			MyGraph minimum = new MyGraph(graph.et);
 			Vector<Integer[]> vec = g.KruskalMST();
+			String output = "";
 			for (Integer[] arr : vec) {
 				MapIterator<String, Integer> it = map.mapIterator();
 				String from = "", to = "", cost = String.valueOf(arr[2]);
@@ -278,6 +277,8 @@ public class PrintingFrame extends JFrame {
 					if (value == arr[1])
 						to = key;
 				}
+
+				output += from + " " + to + " " + cost + "\n";
 				while (minimum.containsEdge(cost))
 					cost += ' ';
 				minimum.addVertex(from);
@@ -290,9 +291,10 @@ public class PrintingFrame extends JFrame {
 			if (n == 1) {
 				minimum = graph;
 			}
-			panel = new GraphPanel(minimum);
+			panel = new GraphPanel(graph);
 			panel.setBounds(10, 50, 560, 360);
 			panel.vv.setBounds(10, 10, 560 - 20, 360 - 20);
+			panel.coloredMinTree(output);
 			add(panel);
 
 		}
@@ -340,11 +342,24 @@ public class PrintingFrame extends JFrame {
 		msg.setFont(new Font(Font.MONOSPACED, Font.BOLD, 18));
 		add(msg);
 
+		if (hamShit() != 0) {
+			msg.setText("Hamiltonian Path Starts from " + start);
+			panel = new GraphPanel(paths.get(0));
+			panel.setBounds(10, 50, 560, 360);
+			panel.vv.setBounds(10, 10, 560 - 20, 360 - 20);
+			add(panel);
+			add(anoter);
+			add(cycle);
+		}
+	}
+
+	int hamShit() {
+
 		HamiltonPathAlgorithm ham = new HamiltonPathAlgorithm();
 		int V = graph.getVertexCount(); // Number of vertices in graph
 
 		if (V == 0)
-			return;
+			return 0;
 
 		HashedMap<String, Integer> map = new HashedMap<String, Integer>();
 		int i = 0;
@@ -385,8 +400,8 @@ public class PrintingFrame extends JFrame {
 
 		int current = 0;
 		if (vec.size() != 0) {
-			String[] starts = new String[vec.size()];
-			String[] ends = new String[vec.size()];
+			starts = new String[vec.size()];
+			ends = new String[vec.size()];
 			paths = new Vector<MyGraph>();
 			for (Integer[] arr : vec) {
 				MyGraph element = new MyGraph(EdgeType.UNDIRECTED);
@@ -415,25 +430,19 @@ public class PrintingFrame extends JFrame {
 				}
 				paths.add(element);
 			}
-			msg.setText("Hamiltonian Path 1/" + paths.size() + " From " + start);
-			panel = new GraphPanel(paths.get(0));
-			panel.setBounds(10, 50, 560, 360);
-			panel.vv.setBounds(10, 10, 560 - 20, 360 - 20);
-			add(panel);
-			add(anoter);
 
 			cycles = new Vector<MyGraph>();
 			for (int j = 0; j < current; ++j) {
 
 				String edge = graph.findEdge(starts[j], ends[j]);
-				if (edge != null) {
+				if (edge != null && !paths.get(j).containsEdge(edge)) {
 					MyGraph found = new MyGraph(paths.get(j));
 					found.addEdge(starts[j], ends[j], edge);
 					cycles.add(found);
 				}
 			}
-			add(cycle);
 		}
+		return vec.size();
 	}
 
 	public void EulerAlgorithm() {
@@ -448,9 +457,9 @@ public class PrintingFrame extends JFrame {
 		int type = eul.Euler();
 		if (!(type == 0 || graph.getVertexCount() == 0)) {
 			if (type == 2)
-				msg.setText("It Has Eulerian Path");
+				msg.setText("It Has Eulerian Paths");
 			else
-				msg.setText("It Has Eulerian Circuit");
+				msg.setText("It Has Eulerian Circuits");
 
 			panel = new GraphPanel(new MyGraph(GraphPanel.getGraph()));
 			panel.setBounds(10, 50, 560, 360);
@@ -506,6 +515,131 @@ public class PrintingFrame extends JFrame {
 		}
 	}
 
+	public void minimumHamiltonian() {
+		msg = new Label("No Hamiltonian Circuits");
+		msg.setBounds(110, 20, 400, 30);
+		msg.setFont(new Font(Font.MONOSPACED, Font.BOLD, 18));
+		add(msg);
+
+		if (hamShit() != 0) {
+
+			msg.setText("Minimum Hamiltonian Circuit [");
+			msg.setBounds(20, 20, 400, 30);
+			msg.setFont(new Font(Font.DIALOG, Font.PLAIN, 13));
+
+			int minimum = Integer.MAX_VALUE;
+			int minIndex = -1;
+			for (int i = 0; i < cycles.size(); ++i) {
+				MyGraph current = cycles.get(i);
+				Object[] edgat = current.getEdges().toArray();
+				int localMin = 0;
+				for (Object ed : edgat) {
+					if (!ed.toString().trim().equals("")) {
+						localMin += Integer.parseInt(ed.toString().trim());
+					}
+				}
+				if (minimum > localMin) {
+					minimum = localMin;
+					minIndex = i;
+				}
+			}
+			if (minIndex != -1) {
+				panel = new GraphPanel(graph);
+				panel.setBounds(10, 50, 560, 360);
+				panel.vv.setBounds(10, 10, 560 - 20, 360 - 20);
+				add(panel);
+
+				Object[] to = cycles.get(minIndex)
+						.getNeighbors(starts[minIndex]).toArray();
+				Vector<String> visited = new Vector<String>();
+				visited.add(starts[minIndex]);
+				String first = "";
+				for (Object o : to) {
+					if (o.toString().equals(ends[minIndex]))
+						continue;
+					first = o.toString();
+				}
+				visited.add(first);
+
+				while (visited.size() < cycles.get(minIndex).getEdgeCount()) {
+					to = cycles.get(minIndex).getNeighbors(first).toArray();
+					for (Object o : to) {
+						if (visited.contains(o.toString()))
+							continue;
+						first = o.toString();
+					}
+					visited.add(first);
+				}
+				visited.add(starts[minIndex]);
+
+				for (int i = 0; i < visited.size(); ++i) {
+					if (i == visited.size() - 1)
+						msg.setText(msg.getText() + visited.get(i) + "]");
+					else
+						msg.setText(msg.getText() + visited.get(i) + " => ");
+				}
+
+			} else {
+				msg.setText("No Hamiltonian Circuits");
+				msg.setBounds(110, 20, 400, 30);
+				msg.setFont(new Font(Font.MONOSPACED, Font.BOLD, 18));
+
+			}
+		}
+	}
+
+	public void coloringProblem() {
+
+		msg = new Label("Color Number Is");
+		msg.setBounds(170, 20, 300, 30);
+		msg.setFont(new Font(Font.MONOSPACED, Font.BOLD, 25));
+		add(msg);
+
+		int V = graph.getVertexCount(); // Number of vertices in graph
+		int E = graph.getEdgeCount(); // Number of edges in graph
+		ColoringAlgorithm algorithm = new ColoringAlgorithm(V);
+
+		HashedMap<String, Integer> map = new HashedMap<String, Integer>();
+		int i = 0;
+		for (Object o : graph.getVertices().toArray()) {
+			map.put(o.toString(), i);
+			i++;
+		}
+		for (Object e : graph.getEdges().toArray()) {
+			String from = graph.getEndpoints(e.toString()).getFirst();
+			String to = graph.getEndpoints(e.toString()).getSecond();
+			algorithm.addEdge(map.get(from), map.get(to));
+		}
+
+		String shit = algorithm.greedyColoring();
+		String output = "";
+		String[] lines = shit.split("\n");
+		int max = Integer.MIN_VALUE;
+		for (i = 0; i < lines.length; ++i) {
+			String[] data = lines[i].split(" ");
+			int mappedValue = Integer.parseInt(data[0]);
+			String color = data[1];
+			if (max < Integer.parseInt(color)) {
+				max = Integer.parseInt(color);
+			}
+			MapIterator<String, Integer> it = map.mapIterator();
+			while (it.hasNext()) {
+				String key = it.next();
+				int value = map.get(key);
+				if (value == mappedValue)
+					output += key + " " + color + "\n";
+			}
+		}
+
+		msg.setText(msg.getText() + " " + (max + 1));
+		panel = new GraphPanel(new MyGraph(GraphPanel.getGraph()));
+		panel.setBounds(10, 50, 560, 360);
+		panel.vv.setBounds(10, 10, 560 - 20, 360 - 20);
+		add(panel);
+		panel.changeColor(output, max + 1);
+
+	}
+
 	private class listen implements MouseListener {
 
 		public void mouseReleased(MouseEvent arg0) {
@@ -536,32 +670,30 @@ public class PrintingFrame extends JFrame {
 				if (cycles.size() == 0)
 					return;
 
-				cyclesIndex++;
-				cyclesIndex %= cycles.size();
-				msg.setText("Hamiltonian Circle " + (cyclesIndex + 1) + "/"
-						+ cycles.size());
+				if (check == false)
+					return;
+				msg.setText("Hamiltonian Circle");
 				panel.remove(panel.vv);
 				panel.repaint();
-				panel.setGraph(cycles.get(cyclesIndex));
+				panel.setGraph(cycles.get(0));
 				panel.setBounds(10, 50, 560, 360);
 				panel.vv.setBounds(10, 10, 560 - 20, 360 - 20);
+
+				check = false;
 
 			} else if (arg0.getComponent().getName().equals("another")
-					&& paths.size() > 1) {
+					&& !check) {
 
-				pathsIndex++;
-				pathsIndex %= paths.size();
-				msg.setText("Hamiltonian Path " + (pathsIndex + 1) + "/"
-						+ paths.size() + " From " + start);
+				msg.setText("Hamiltonian Path " + "Starts From " + start);
 				panel.remove(panel.vv);
 				panel.repaint();
-				panel.setGraph(paths.get(pathsIndex));
+				panel.setGraph(paths.get(0));
 				panel.setBounds(10, 50, 560, 360);
 				panel.vv.setBounds(10, 10, 560 - 20, 360 - 20);
+				check = true;
+
 			}
 			if (arg0.getComponent().getName().equals("print")) {
-
-				/**/
 
 				msg.setFont(new Font(Font.DIALOG, Font.PLAIN, 12));
 				msg.setBounds(10, 20, 650, 30);

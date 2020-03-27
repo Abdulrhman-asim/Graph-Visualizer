@@ -131,7 +131,7 @@ public class HomeFrame extends JFrame {
 			}
 			if (event.getComponent().getName().equals("coloring")) {
 				Home.choice = 6;
-				Home.updateFrame();
+				Home.home.copy(new InputFrame("Graph", false));
 
 			}
 			if (event.getComponent().getName().equals("hamiltonPath")) {
@@ -145,7 +145,7 @@ public class HomeFrame extends JFrame {
 			}
 			if (event.getComponent().getName().equals("MHC")) {
 				Home.choice = 10;
-				Home.updateFrame();
+				Home.home.copy(new InputFrame("Graph", false));
 
 			}
 			if (event.getComponent().getName().equals("MST")) {
